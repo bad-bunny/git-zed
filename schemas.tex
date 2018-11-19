@@ -1,0 +1,48 @@
+\section{Schemas}
+
+\begin{schema}{FileMode}
+  User: FilePermission \\
+  Group: FilePermission \\
+  Owner: FilePermission
+\end{schema}
+
+\begin{schema}{Object}
+  Mode: FileMode \\
+  Type: FileType \\
+	Digest: Digest \\
+	Filename: Name
+\end{schema}
+
+\begin{schema}{Blob}
+	Object
+\end{schema}
+
+\begin{schema}{TreeRecursive}
+	Object
+\end{schema}
+
+\begin{schema}{Tree}
+	Object \\
+	Children: \power (Blob \cup TreeRecursive)
+\end{schema}
+
+\begin{schema}{CommitRecursive}
+	Object
+\end{schema}
+
+\begin{schema}{Commit}
+	Digest: Digest \\
+	Author: Author \\
+	Message: Message \\
+	Parents: \power CommitRecursive \\
+	CommitTree: Tree
+\end{schema}
+
+\begin{schema}{Repository}
+	HEAD: Commit \\
+	Index: Tree \\
+	WorkingCopy: Tree \\
+	Branches: Name \pfun Commit \\
+	Tags: Name \pfun Commit
+\end{schema}
+
