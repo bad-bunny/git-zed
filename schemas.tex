@@ -1,48 +1,29 @@
 \section{Schemas}
 
 \begin{schema}{FileMode}
-  User: FilePermission \\
-  Group: FilePermission \\
-  Owner: FilePermission
+  user: FilePermission \\
+  group: FilePermission \\
+  owner: FilePermission
 \end{schema}
 
 \begin{schema}{Object}
-  Mode: FileMode \\
-  Type: FileType \\
-	Digest: Digest \\
-	Filename: Name
+  mode: FileMode \\
+  type: FileType \\
+	digest: Digest \\
+	filename: Name
 \end{schema}
 
-\begin{schema}{Blob}
-	Object
-\end{schema}
-
-\begin{schema}{TreeRecursive}
-	Object
-\end{schema}
-
-\begin{schema}{Tree}
-	Object \\
-	Children: \power (Blob \cup TreeRecursive)
-\end{schema}
-
-\begin{schema}{CommitRecursive}
-	Object
-\end{schema}
+\begin{zed}
+  Tree ::= blob \ldata Object \rdata | branch \ldata Object \cross \finset Tree \rdata
+\end{zed}
 
 \begin{schema}{Commit}
-	Digest: Digest \\
-	Author: Author \\
-	Message: Message \\
-	Parents: \power CommitRecursive \\
-	CommitTree: Tree
+	digest: Digest \\
+	author: Author \\
+	message: Message \\
+	commitTree: Tree
 \end{schema}
 
-\begin{schema}{Repository}
-	HEAD: Commit \\
-	Index: Tree \\
-	WorkingCopy: Tree \\
-	Branches: Name \pfun Commit \\
-	Tags: Name \pfun Commit
-\end{schema}
-
+\begin{axdef}
+  hash: Object \surj Digest
+\end{axdef}

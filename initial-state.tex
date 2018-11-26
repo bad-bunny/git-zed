@@ -1,0 +1,11 @@
+\section{Initial State}
+
+\begin{schema}{Repository}
+	head: Commit \\
+	index: Tree \\
+	workingCopy: Tree \\
+	branch: Name \pfun Commit \\
+	tag: Name \pfun Commit \\
+	parent: Commit \pfun \power Commit
+\end{schema}
+
