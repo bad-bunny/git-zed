@@ -9,5 +9,6 @@ fuzz:
 			free-type-definitions.tex \
 			schemas.tex \
 			initial-state.tex \
+			operations.tex \
 			main.tex
 .PHONY:

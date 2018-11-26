@@ -8,22 +8,30 @@
 
 \begin{schema}{Object}
   mode: FileMode \\
-  type: FileType \\
 	digest: Digest \\
 	filename: Name
 \end{schema}
 
 \begin{zed}
-  Tree ::= blob \ldata Object \rdata | branch \ldata Object \cross \finset Tree \rdata
+  Tree ::= treeBlob \ldata Object \rdata | treeBranch \ldata Object \cross \finset Tree \rdata
 \end{zed}
+
+% \begin{axdef}
+  % childOf: Object \cross Tree \fun Boolean
+% \where
+% \end{axdef}
 
 \begin{schema}{Commit}
 	digest: Digest \\
 	author: Author \\
 	message: Message \\
-	commitTree: Tree
+	tree: Tree
 \end{schema}
 
 \begin{axdef}
-  hash: Object \surj Digest
+  hashObject: Object \surj Digest
+\end{axdef}
+
+\begin{axdef}
+  hashCommit: Author \cross Message \cross Tree \surj Digest
 \end{axdef}

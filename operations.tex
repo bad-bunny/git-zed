@@ -1,0 +1,116 @@
+\section{Operations}
+
+\subsection{Add}
+
+% \begin{schema}{AddOk}
+  % \Delta Repository \\
+  % file?: Object \\
+  % path?: Object
+% \where
+	% file? in WorkingTree
+	% file? in treeBlob
+	% path? in Index
+	% path? es un treeBranch
+	% agregar file? a hijos de path?
+	% calcular hash de file? recursivamente hacia arriba
+	% devuelve ok
+% \end{schema}
+
+\subsection{Branch}
+
+\begin{schema}{BranchOk}
+	\Delta Repository \\
+	name?: Name \\
+	commit?: Commit \\
+	response!: GitResponse
+\where
+	name? \notin \dom branch \\
+	branch' = branch \cup \{name? \mapsto commit?\} \\
+	head' = head \\
+	index' = index \\
+	workingCopy' = workingCopy \\
+	tag' = tag \\
+	parent' = parent \\
+	response! = Ok
+\end{schema}
+
+\begin{schema}{BranchBranchAlreadyExists}
+	\Xi Repository \\
+	name?: Name \\
+	commit?: Commit \\
+	response!: GitResponse
+\where
+	name? \in \dom branch \\
+  response! = BranchAlreadyExists
+\end{schema}
+
+\begin{zed}
+	Branch \defs BranchOk \lor BranchBranchAlreadyExists
+\end{zed}
+
+\subsection{Tag}
+
+\begin{schema}{TagOk}
+	\Delta Repository \\
+	name?: Name \\
+	commit?: Commit \\
+	response!: GitResponse
+\where
+	name? \notin \dom tag \\
+	tag' = tag \cup \{name? \mapsto commit?\} \\
+	head' = head \\
+	index' = index \\
+	workingCopy' = workingCopy \\
+	branch' = branch \\
+	parent' = parent \\
+	response! = Ok
+\end{schema}
+
+\begin{schema}{TagTagAlreadyExists}
+	\Xi Repository \\
+	name?: Name \\
+	commit?: Commit \\
+	response!: GitResponse
+\where
+	name? \in \dom tag \\
+  response! = TagAlreadyExists
+\end{schema}
+
+\begin{zed}
+	Tag \defs TagOk \lor TagTagAlreadyExists
+\end{zed}
+
+\subsection{DoCommit}
+
+\begin{schema}{DoCommitOk}
+	\Delta Repository \\
+	author?: Author \\
+	message?: Message \\
+	response!: GitResponse
+\where
+	head.tree \neq index \\
+	head'.digest = hashCommit~(author?, message?, index) \\
+	head'.author = author? \\
+	head'.message = message? \\
+	head'.tree = index \\
+	parent' = parent \cup \{head' \mapsto \{head\} \} \\
+	workingCopy' = index \\
+	index' = index \\
+	branch' = branch \\
+	tag' = tag \\
+	response! = Ok
+\end{schema}
+
+\begin{schema}{DoCommitNothingToCommit}
+	\Xi Repository \\
+	author?: Author \\
+	message?: Message \\
+	response!: GitResponse
+\where
+	head.tree = index \\
+	response! = NothingToCommit
+\end{schema}
+
+\begin{zed}
+	DoCommit \defs DoCommitOk \lor DoCommitNothingToCommit
+\end{zed}
