@@ -128,3 +128,50 @@
 \begin{zed}
 	GitCommit \defs GitCommitOk \lor GitCommitNothingToCommit
 \end{zed}
+
+\subsection{Reset Hard}
+
+\begin{schema}{GitResetHardOk}
+  \Delta Repository \\
+  commit?: Commit \\
+  response!: GitResponse \\
+  refs: \finset Commit
+\where
+  refs = \{ head \} \cup \ran branch \cup \ran tag \\
+  \exists r: refs \spot commit? \in recursiveParents~(r,parent) \\
+  head' = commit? \\
+  index' = workingCopy' = commit?.tree \\
+  branch' = branch \\
+  tag' = tag \\
+  parent' = parent \\
+  response! = Ok
+\end{schema}
+
+\begin{schema}{GitResetHardCommitNotInRepository}
+  \Xi Repository \\
+  commit?: Commit \\
+  response!: GitResponse \\
+  refs: \finset Commit
+\where
+  refs = \{ head \} \cup \ran branch \cup \ran tag \\
+  \lnot (\exists r: refs \spot commit? \in recursiveParents~(r,parent)) \\
+  response! = CommitNotInRepository
+\end{schema}
+
+\begin{zed}
+  GitResetHard \defs GitResetHardOk \lor GitResetHardCommitNotInRepository
+\end{zed}
+
+% reset soft
+% reset mixed
+% checkout branch
+% cherry pick
+
+% trabajo futuro:
+% garbage collector
+% definir merge conflict
+% merge -> tiempo
+% rebase -> tiempo
+% add -> sin delete, sin update
+% operaciones con remotes (fetch, pull, push, ...)
+

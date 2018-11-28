@@ -1,0 +1,49 @@
+\section{Axiomatic Definitions}
+
+\subsection{SubTrees}
+
+\begin{axdef}
+  subTrees: Tree \pfun \finset Tree
+\where
+  \exists a,b,c: Tree; bo: Object; bc: \finset Tree \spot a \in subTrees~b \iff \\
+  \t1 a = b \lor \\
+  \t1 b \in \ran treeBranch \land b = treeBranch~(bo,bc) \land c \in bc \land a \in subTrees~c
+\end{axdef}
+
+\subsection{TreeWithFile}
+
+\begin{axdef}
+  treeWithFile: Tree \cross Tree \cross Tree \pfun Tree
+\where
+  \exists src, path, file, new, c: Tree; so: Object; sc, sc': \finset Tree \spot new = treeWithFile~(src, path, file) \iff \\
+  \t1 src = treeBranch~(so,sc) \land \\
+  \t1 path \in \ran treeBranch \land \\
+  \t1 path \in subTrees~src \land \\
+    \t2 ( src = path \land new = treeBranch~(so, sc \cup \{ file \}) \lor \\
+    \t2 sc' = \{ c: sc | path \notin subTrees~c \} \cup \\
+      \t3 \{ t: Tree | c \in sc \land path \in subTrees~c \land t = treeWithFile~(c, path, file) \} \land \\
+      \t3 new = treeBranch~(so, sc') )
+\end{axdef}
+
+\subsection{HashTree}
+
+\begin{axdef}
+  hashTree: Tree \surj Digest
+\end{axdef}
+
+\subsection{HashCommit}
+
+\begin{axdef}
+  hashCommit: Commit \surj Digest
+\end{axdef}
+
+\subsection{RecursiveParents}
+
+\begin{axdef}
+  recursiveParents: Commit \cross (Commit \pfun \power Commit) \pfun \power Commit
+\where
+  \exists ref: Commit; parent: Commit \pfun \power Commit; result: \power Commit \spot \\
+  \t1 result = recursiveParents~(ref, parent) \iff \\
+    \t2 ref \in \dom parent \land \\
+    \t2 (\forall c: result \spot c = ref \lor (\exists p: parent~ref \spot c \in recursiveParents~(p, parent)))
+\end{axdef}
