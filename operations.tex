@@ -33,7 +33,7 @@
 
 \subsection{Branch}
 
-\begin{schema}{BranchOk}
+\begin{schema}{GitBranchOk}
 	\Delta Repository \\
 	name?: Name \\
 	commit?: Commit \\
@@ -49,7 +49,7 @@
 	response! = Ok
 \end{schema}
 
-\begin{schema}{BranchBranchAlreadyExists}
+\begin{schema}{GitBranchBranchAlreadyExists}
 	\Xi Repository \\
 	name?: Name \\
 	commit?: Commit \\
@@ -60,12 +60,12 @@
 \end{schema}
 
 \begin{zed}
-	Branch \defs BranchOk \lor BranchBranchAlreadyExists
+	GitBranch \defs GitBranchOk \lor GitBranchBranchAlreadyExists
 \end{zed}
 
 \subsection{Tag}
 
-\begin{schema}{TagOk}
+\begin{schema}{GitTagOk}
 	\Delta Repository \\
 	name?: Name \\
 	commit?: Commit \\
@@ -81,7 +81,7 @@
 	response! = Ok
 \end{schema}
 
-\begin{schema}{TagTagAlreadyExists}
+\begin{schema}{GitTagTagAlreadyExists}
 	\Xi Repository \\
 	name?: Name \\
 	commit?: Commit \\
@@ -92,12 +92,12 @@
 \end{schema}
 
 \begin{zed}
-	Tag \defs TagOk \lor TagTagAlreadyExists
+	GitTag \defs GitTagOk \lor GitTagTagAlreadyExists
 \end{zed}
 
-\subsection{DoCommit}
+\subsection{Commit}
 
-\begin{schema}{DoCommitOk}
+\begin{schema}{GitCommitOk}
 	\Delta Repository \\
 	author?: Author \\
 	message?: Message \\
@@ -115,7 +115,7 @@
 	response! = Ok
 \end{schema}
 
-\begin{schema}{DoCommitNothingToCommit}
+\begin{schema}{GitCommitNothingToCommit}
 	\Xi Repository \\
 	author?: Author \\
 	message?: Message \\
@@ -126,5 +126,5 @@
 \end{schema}
 
 \begin{zed}
-	DoCommit \defs DoCommitOk \lor DoCommitNothingToCommit
+	GitCommit \defs GitCommitOk \lor GitCommitNothingToCommit
 \end{zed}
