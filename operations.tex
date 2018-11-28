@@ -2,19 +2,34 @@
 
 \subsection{Add}
 
-% \begin{schema}{AddOk}
-  % \Delta Repository \\
-  % file?: Object \\
-  % path?: Object
-% \where
-	% file? in WorkingTree
-	% file? in treeBlob
-	% path? in Index
-	% path? es un treeBranch
-	% agregar file? a hijos de path?
-	% calcular hash de file? recursivamente hacia arriba
-	% devuelve ok
-% \end{schema}
+\begin{schema}{GitAddOk}
+  \Delta Repository \\
+  file?: Tree \\
+  path?: Tree \\
+  response!: GitResponse
+\where
+  index' = treeWithFile~(index, path?, file?) \\
+  head' = head \\
+  workingCopy' = workingCopy \\
+  branch' = branch \\
+  tag' = tag \\
+  parent' = parent \\
+  response! = Ok
+\end{schema}
+
+\begin{schema}{GitAddCannotAdd}
+  \Xi Repository \\
+  file?: Tree \\
+  path?: Tree \\
+  response!: GitResponse
+\where
+  (index, path?, file?) \notin \dom treeWithFile \\
+  response! = CannotAdd
+\end{schema}
+
+\begin{zed}
+  GitAdd \defs GitAddOk \lor GitAddCannotAdd
+\end{zed}
 
 \subsection{Branch}
 
@@ -89,7 +104,6 @@
 	response!: GitResponse
 \where
 	head.tree \neq index \\
-	head'.digest = hashCommit~(author?, message?, index) \\
 	head'.author = author? \\
 	head'.message = message? \\
 	head'.tree = index \\

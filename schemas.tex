@@ -8,7 +8,6 @@
 
 \begin{schema}{Object}
   mode: FileMode \\
-	digest: Digest \\
 	filename: Name
 \end{schema}
 
@@ -16,22 +15,37 @@
   Tree ::= treeBlob \ldata Object \rdata | treeBranch \ldata Object \cross \finset Tree \rdata
 \end{zed}
 
-% \begin{axdef}
-  % childOf: Object \cross Tree \fun Boolean
-% \where
-% \end{axdef}
-
 \begin{schema}{Commit}
-	digest: Digest \\
 	author: Author \\
 	message: Message \\
 	tree: Tree
 \end{schema}
 
 \begin{axdef}
-  hashObject: Object \surj Digest
+  subTrees: Tree \pfun \finset Tree
+\where
+  \exists a,b,c: Tree; bo: Object; bc: \finset Tree \spot a \in subTrees~b \iff \\
+  \t1 a = b \lor \\
+  \t1 b \in \ran treeBranch \land b = treeBranch~(bo,bc) \land c \in bc \land a \in subTrees~c
 \end{axdef}
 
 \begin{axdef}
-  hashCommit: Author \cross Message \cross Tree \surj Digest
+  treeWithFile: Tree \cross Tree \cross Tree \pfun Tree
+\where
+  \exists src, path, file, new, c: Tree; so: Object; sc, sc': \finset Tree \spot new = treeWithFile~(src, path, file) \iff \\
+  \t1 src = treeBranch~(so,sc) \land \\
+  \t1 path \in \ran treeBranch \land \\
+  \t1 path \in subTrees~src \land \\
+    \t2 ( src = path \land new = treeBranch~(so, sc \cup \{ file \}) \lor \\
+    \t2 sc' = \{ c: sc | path \notin subTrees~c \} \cup \\
+      \t3 \{ t: Tree | c \in sc \land path \in subTrees~c \land t = treeWithFile~(c, path, file) \} \land \\
+      \t3 new = treeBranch~(so, sc') )
+\end{axdef}
+
+\begin{axdef}
+  hashTree: Tree \surj Digest
+\end{axdef}
+
+\begin{axdef}
+  hashCommit: Commit \surj Digest
 \end{axdef}
