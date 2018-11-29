@@ -1,4 +1,7 @@
 ### LaTeX
 *.aux
+*.bbl
+*.blg
 *.log
 *.pdf
+*.toc

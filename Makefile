@@ -1,7 +1,12 @@
-build: fuzz
+build: fuzz bibtex
 	@pdflatex main.tex
 	@evince main.pdf &
 .PHONY: build
+
+bibtex:
+	@pdflatex main.tex
+	@bibtex main
+.PHONY: bibtex
 
 fuzz:
 	@fuzz \
@@ -12,4 +17,4 @@ fuzz:
 			initial-state.tex \
 			operations.tex \
 			main.tex
-.PHONY:
+.PHONY: fuzz
