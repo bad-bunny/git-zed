@@ -1,5 +1,10 @@
 \section{Free Type Definitions}
 
+\subsection{FilePermission}
+
+Using Unix permissions as a base, we define \texttt{FilePermission} as the valid
+combinations of read, write, and execute permissions for owner, group or other.
+
 \begin{zed}
   FilePermission ::= \\
   \t1 None | \\
@@ -11,11 +16,10 @@
   \t1 Execute
 \end{zed}
 
-\begin{zed}
-  FileType ::= \\
-  \t1 File | \\
-  \t1 Directory
-\end{zed}
+\subsection{GitResponse}
+
+We define \texttt{GitResponse} as the set of all the possible return codes
+for the operations that will be presented in future sections.
 
 \begin{zed}
   GitResponse ::= \\

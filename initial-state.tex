@@ -1,11 +1,18 @@
 \section{Initial State}
 
+In the initial state we keep track of the three Git trees: working copy, index
+and head.  Moreover, we define relations for branches, tags and parent commits.
+
 \begin{schema}{Repository}
 	head: Commit \\
 	index: Tree \\
 	workingCopy: Tree \\
 	branch: Name \pfun Commit \\
 	tag: Name \pfun Commit \\
-	parent: Commit \pfun \power Commit
+	parent: Commit \pfun \finset Commit
 \end{schema}
+
+The first two partial functions, $branch$ and $tag$, map a name to a
+\texttt{Commit}.  The $parent$ function is in charge of tracking the repository
+commits by associating each commit to a finite set of parent commits.
 

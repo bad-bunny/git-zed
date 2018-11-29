@@ -1,0 +1,20 @@
+\section{Conclusions}
+
+To the best of our knowledge, our specification of the Git version control
+system adheres very closely to the actual implementation. We aligned our schema
+definitions to Git's object and tree structures. Also, we operated over the
+working copy, index and commit trees in a way that mimics, or at least closely
+resembles, Git's actual behavior.
+
+The translation of recursive constructs into Z was not intuitive; however, we
+found that defining a tree structure using two different constructors for
+branches and leaf nodes allowed us to express recursive structures in a way that
+was both simple and easy to understand. Nevertheless, these constructors by
+themselves were not enough to define recursive operations. We attempted to solve
+this issue with traversal sets and existence constraints, but the best solution
+for our use case ended up being recursive axiomatic definitions. We also found
+that the upwards traversal of a tree to recalculate digests was too complex and
+did not provide much in terms of specification constraints. Instead, we decided
+to follow the example of Morgan and Sufrin~\cite{morgan} by defining global
+relations to reference the hash digests of both objects and commits.
+

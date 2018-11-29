@@ -1,19 +1,47 @@
 \section{Schemas}
 
+\subsection{FileMode}
+
+\texttt{FileMode} represents the Unix file permissions for a file or directory.
+
 \begin{schema}{FileMode}
   user: FilePermission \\
   group: FilePermission \\
   owner: FilePermission
 \end{schema}
 
+\subsection{Object}
+
+\texttt{Object} is the smallest entry that can be tracked by a Git repository.
+
 \begin{schema}{Object}
   mode: FileMode \\
 	filename: Name
 \end{schema}
 
+\subsection{Tree}
+
+Git relies on a tree data structure to track objects. This allows storing
+individual files (blob) and groups of files (tree), similar to a UNIX
+filesystem.
+
+We define \texttt{Tree} as a schema with two constructors. First, we define
+\texttt{treeBlob} as a constructor leaf nodes that map to files. Then, we use
+\texttt{treeBranch} to construct non-leaf nodes that correspond to directories.
+
 \begin{zed}
   Tree ::= treeBlob \ldata Object \rdata | treeBranch \ldata Object \cross \finset Tree \rdata
 \end{zed}
+
+The domain of \texttt{treeBlob} allows for the creation of a \texttt{Tree} given
+any \texttt{Object}.  In contrast, \texttt{treeBranch} requires a parent
+\texttt{Object} and a finite set of \texttt{Tree} elements that should be
+considered its children.
+
+\subsection{Commit}
+
+A commit can be seen as a snapshot signed by an author along with a short
+description.
 
 \begin{schema}{Commit}
 	author: Author \\

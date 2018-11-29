@@ -2,6 +2,11 @@
 
 \subsection{Add}
 
+The add operation updates the index using the current content found in the
+working tree, to prepare the content staged for the next commit. This command
+can be performed multiple times before a commit. It only adds the content of the
+specified file at the time the operation is run.
+
 \begin{schema}{GitAddOk}
   \Delta Repository \\
   file?: Tree \\
@@ -17,6 +22,9 @@
   response! = Ok
 \end{schema}
 
+If the input combination of $file?$ and $path?$ is not part of the index tree,
+then the file cannot be added:
+
 \begin{schema}{GitAddCannotAdd}
   \Xi Repository \\
   file?: Tree \\
@@ -27,11 +35,18 @@
   response! = CannotAdd
 \end{schema}
 
+Finally, we define \texttt{GitAdd} as the disjunction of the previous two
+schemas:
+
 \begin{zed}
   GitAdd \defs GitAddOk \lor GitAddCannotAdd
 \end{zed}
 
 \subsection{Branch}
+
+The branch command creates a new branch head with an associated name
+which points to the current repository head. The operation only creates the new
+branch and does not switch the working tree to it.
 
 \begin{schema}{GitBranchOk}
 	\Delta Repository \\
@@ -49,6 +64,9 @@
 	response! = Ok
 \end{schema}
 
+Branch names are unique. If $name?$ is already assigned to a head, the operation
+will fail:
+
 \begin{schema}{GitBranchBranchAlreadyExists}
 	\Xi Repository \\
 	name?: Name \\
@@ -59,11 +77,17 @@
   response! = BranchAlreadyExists
 \end{schema}
 
+We define \texttt{GitBranch} as the following disjunction:
+
 \begin{zed}
 	GitBranch \defs GitBranchOk \lor GitBranchBranchAlreadyExists
 \end{zed}
 
 \subsection{Tag}
+
+Tag is one of the simplest Git operations. It labels a commit
+with a name. One of the most popular use cases is for semantically
+versioning projects.
 
 \begin{schema}{GitTagOk}
 	\Delta Repository \\
@@ -81,6 +105,9 @@
 	response! = Ok
 \end{schema}
 
+As for branch naming, a commit cannot be tagged with the same value twice.
+If $name?$ already exists, then the operation results in an error:
+
 \begin{schema}{GitTagTagAlreadyExists}
 	\Xi Repository \\
 	name?: Name \\
@@ -91,11 +118,16 @@
   response! = TagAlreadyExists
 \end{schema}
 
+We define \texttt{GitTag} as the following disjunction:
+
 \begin{zed}
 	GitTag \defs GitTagOk \lor GitTagTagAlreadyExists
 \end{zed}
 
 \subsection{Commit}
+
+Commit stores the current contents of the index in a new commit along
+with a message from the user describing the changes.
 
 \begin{schema}{GitCommitOk}
 	\Delta Repository \\
@@ -115,6 +147,9 @@
 	response! = Ok
 \end{schema}
 
+If the index tree has not been updated, the operation responds
+with a \textit{nothing to commit} message:
+
 \begin{schema}{GitCommitNothingToCommit}
 	\Xi Repository \\
 	author?: Author \\
@@ -125,11 +160,16 @@
 	response! = NothingToCommit
 \end{schema}
 
+We define \texttt{GitCommit} as the following disjunction:
+
 \begin{zed}
 	GitCommit \defs GitCommitOk \lor GitCommitNothingToCommit
 \end{zed}
 
 \subsection{Reset Hard}
+
+This reset form resets the index and working tree to a specific commit. Any
+changes to known files in the working tree since the input commit are discarded.
 
 \begin{schema}{GitResetHardOk}
   \Delta Repository \\
@@ -147,6 +187,9 @@
   response! = Ok
 \end{schema}
 
+If the $commit?$ does not belong to the repository, then the operation throws
+an error:
+
 \begin{schema}{GitResetHardCommitNotInRepository}
   \Xi Repository \\
   commit?: Commit \\
@@ -158,20 +201,9 @@
   response! = CommitNotInRepository
 \end{schema}
 
+We define \texttt{GitResetHard} as the following disjunction:
+
 \begin{zed}
   GitResetHard \defs GitResetHardOk \lor GitResetHardCommitNotInRepository
 \end{zed}
-
-% reset soft
-% reset mixed
-% checkout branch
-% cherry pick
-
-% trabajo futuro:
-% garbage collector
-% definir merge conflict
-% merge -> tiempo
-% rebase -> tiempo
-% add -> sin delete, sin update
-% operaciones con remotes (fetch, pull, push, ...)
 

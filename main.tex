@@ -1,8 +1,12 @@
 \documentclass[titlepage]{article}
 
-\usepackage[margin=1in]{geometry}
+\usepackage{float}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage{zed-csp}
+
+\graphicspath{ {graphics/} }
 
 \title{A Formal Specification of Git in Z}
 \date{2018\\ November}
@@ -15,6 +19,7 @@
 \maketitle
 
 \tableofcontents
+\listoffigures
 \newpage
 
 \input{introduction}
@@ -30,6 +35,10 @@
 \input{initial-state}
 
 \input{operations}
+
+\input{conclusions}
+
+\input{future-work}
 
 \nocite{*}
 \bibliography{references}

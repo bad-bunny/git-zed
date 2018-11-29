@@ -2,15 +2,36 @@
 
 \subsection{SubTrees}
 
+We define \texttt{SubTrees} as the relation between a \texttt{Tree} $T$ and the
+finite set of all \texttt{Tree} elements that can be reached by traversing $T$
+(including $T$).
+
 \begin{axdef}
-  subTrees: Tree \pfun \finset Tree
+  subTrees: Tree \fun \finset Tree
 \where
   \exists a,b,c: Tree; bo: Object; bc: \finset Tree \spot a \in subTrees~b \iff \\
   \t1 a = b \lor \\
   \t1 b \in \ran treeBranch \land b = treeBranch~(bo,bc) \land c \in bc \land a \in subTrees~c
 \end{axdef}
 
+To check if $a$ is a sub-tree of $b$, we evaluate two possible scenarios that
+would make this expression true:
+
+\begin{enumerate}
+  \item $a = b$
+  \item $b$ is a \texttt{treeBranch} and $a$ is a sub-tree of at least of $b$'s
+  children ($bc$).
+\end{enumerate}
+
 \subsection{TreeWithFile}
+
+One of the most common tasks for a Git repository is adding or removing nodes
+from an  existing tree; these nodes can be either files or directories. For this
+task we define the partial function \texttt{treeWithFile}. The domain of
+\texttt{treeWithFile} contains tuples of the form $(src, path, node)$, where
+$src$ corresponds to the tree that will be modified, $node$ is the element that
+will be added and $path$ is the insertion point for $node$.  The range defines
+the resulting \texttt{Tree}.
 
 \begin{axdef}
   treeWithFile: Tree \cross Tree \cross Tree \pfun Tree
@@ -21,17 +42,37 @@
   \t1 path \in subTrees~src \land \\
     \t2 ( src = path \land new = treeBranch~(so, sc \cup \{ file \}) \lor \\
     \t2 sc' = \{ c: sc | path \notin subTrees~c \} \cup \\
-      \t3 \{ t: Tree | c \in sc \land path \in subTrees~c \land t = treeWithFile~(c, path, file) \} \land \\
+      \t3 \{ t: Tree | \forall c: sc \spot path \in subTrees~c \land t = treeWithFile~(c, path, file) \} \land \\
       \t3 new = treeBranch~(so, sc') )
 \end{axdef}
 
-\subsection{HashTree}
+We first define the following preconditions:
+
+\begin{enumerate}
+  \item $src$ is not a leaf node.
+  \item $path$ is not a leaf node.
+  \item $path$ is a sub-tree of $src$.
+\end{enumerate}
+
+Next we define two possible cases:
+
+\begin{enumerate}
+  \item $src$ is the insertion point and $node$ is added to $src$'s children.
+  \item $node$ is added (recursively using \texttt{treeWithFile}) to every child
+  of $src$ that contains $path$.
+\end{enumerate}
+
+\subsection{Hash}
+
+\texttt{HashTree} is a surjective function which associates a \texttt{Tree} to a
+hash value.
 
 \begin{axdef}
   hashTree: Tree \surj Digest
 \end{axdef}
 
-\subsection{HashCommit}
+Likewise, \texttt{HashCommit} is a surjective function which associates a
+\texttt{Commit} to a hash value.
 
 \begin{axdef}
   hashCommit: Commit \surj Digest
@@ -39,11 +80,21 @@
 
 \subsection{RecursiveParents}
 
+The relation \texttt{RecursiveParents} allows us to find all the ancestors of a given
+\texttt{Commit} in a repository. The domain includes the reference commit and the parent
+relation of the repository and the range includes the finite set of parent commits.
+
 \begin{axdef}
-  recursiveParents: Commit \cross (Commit \pfun \power Commit) \pfun \power Commit
+  recursiveParents: Commit \cross (Commit \pfun \power Commit) \pfun \finset Commit
 \where
-  \exists ref: Commit; parent: Commit \pfun \power Commit; result: \power Commit \spot \\
+  \exists ref: Commit; parent: Commit \pfun \power Commit; result: \finset Commit \spot \\
   \t1 result = recursiveParents~(ref, parent) \iff \\
     \t2 ref \in \dom parent \land \\
     \t2 (\forall c: result \spot c = ref \lor (\exists p: parent~ref \spot c \in recursiveParents~(p, parent)))
 \end{axdef}
+
+The only precondition for this relation is that the reference $Commit$ is in the
+repository; this is evaluated by checking if the reference $Commit$ is in the
+domain of the repository's parent relation. Given this restriction, we can
+define the recursive parents for a $Commit$ as itself, its parents and the
+recursive parents for each of its parents.
